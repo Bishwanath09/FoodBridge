@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FoodBridge — Save Food. Share Hope.</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="#"><span class="brand-icon">♧</span> FoodBridge</a>
+  <nav><a href="#discover">Discover food</a><a href="#how">How it works</a><button class="nav-cta" onclick="openForm()">+ List surplus food</button></nav>
+</header>
+<main>
+  <section class="hero">
+    <div class="hero-copy">
+      <div class="eyebrow"><span class="pulse"></span> COMMUNITY FOOD NETWORK</div>
+      <h1>Good food deserves<br><span>a second chance.</span></h1>
+      <p>Connect surplus food with people who need it. Find nearby donations, reserve food, and help your community waste less.</p>
+      <div class="hero-actions"><a class="button primary" href="#discover">Find food <span>↗</span></a><button class="button secondary" onclick="openForm()">Share surplus food</button></div>
+      <div class="trust-line"><span>✓</span> Local sharing · Time-sensitive listings · Community impact</div>
+    </div>
+    <div class="hero-art">
+      <div class="art-orbit orbit-one"></div><div class="art-orbit orbit-two"></div>
+      <div class="food-emoji">🥗</div><div class="floating-card card-top"><span class="mini-icon">♡</span><div><b>Share more, waste less</b><small>Every meal can make a difference</small></div></div>
+      <div class="floating-card card-bottom"><span class="leaf">✦</span><div><b>Fresh food nearby</b><small>Discover community listings</small></div></div>
+      <span class="spark spark-one">✳</span><span class="spark spark-two">✦</span>
+    </div>
+  </section>
+  <section class="stats">
+    <div><span class="stat-icon green">♧</span><div><strong id="stat-listings">0</strong><small>Total listings</small></div></div>
+    <div><span class="stat-icon orange">⌁</span><div><strong id="stat-available">0</strong><small>Available now</small></div></div>
+    <div><span class="stat-icon purple">♡</span><div><strong id="stat-reserved">0</strong><small>Reservations</small></div></div>
+    <div><span class="stat-icon blue">♙</span><div><strong id="stat-quantity">0</strong><small>Items reserved</small></div></div>
+  </section>
+  <section class="discover section" id="discover">
+    <div class="section-heading"><div><div class="eyebrow">MAKE A DIFFERENCE TODAY</div><h2>Find food near you</h2><p>Discover surplus food before its pickup window closes.</p></div><div class="live-pill"><span></span> Live listings</div></div>
+    <div class="filters">
+      <label class="search-box"><span>⌕</span><input id="search" placeholder="Search food, provider, or location..." oninput="loadListings()"></label>
+      <select id="category" onchange="loadListings()"><option value="">All categories</option><option>Prepared meals</option><option>Produce</option><option>Bakery</option><option>Dairy</option><option>Packaged food</option></select>
+      <select id="mode" onchange="loadListings()"><option value="">All offers</option><option>Donation</option><option>Discounted</option></select>
+      <button class="filter-button" onclick="toggleSmart()">✧ Smart match <span id="smart-state">Off</span></button>
+    </div>
+    <div class="smart-panel" id="smart-panel">
+      <div><b>Personalize your matches</b><p>Enter approximate coordinates and how many meals or units you need. Coordinates are optional.</p></div>
+      <input id="lat" type="number" step="any" placeholder="Latitude (optional)"><input id="lon" type="number" step="any" placeholder="Longitude (optional)"><input id="needed" type="number" min="1" placeholder="Quantity needed"><button class="button primary" onclick="loadListings()">Match food</button>
+    </div>
+    <div id="alert-banner" class="alert-banner hidden"><span>⚡</span><div><b>Pickup soon</b><p>Urgent listings are highlighted so you can act before the pickup deadline.</p></div></div>
+    <div id="listing-grid" class="listing-grid"><div class="loading">Loading community listings…</div></div>
+    <div id="empty-state" class="empty-state hidden"><div>🥕</div><h3>No food found</h3><p>Try another search or check back soon.</p></div>
+  </section>
+  <section class="how section" id="how">
+    <div class="section-heading centered"><div><div class="eyebrow">SIMPLE. LOCAL. IMPACTFUL.</div><h2>Good things happen in 3 steps</h2><p>A simple way to move extra food to the people who can use it.</p></div></div>
+    <div class="steps">
+      <article><div class="step-icon mint">♧</div><span class="step-number">STEP 01</span><h3>List surplus food</h3><p>Restaurants, shops and households add food details, quantity, pickup time and offer type.</p></article>
+      <article><div class="step-icon peach">⌕</div><span class="step-number">STEP 02</span><h3>Discover a match</h3><p>Recipients browse listings ranked by urgency, distance (when coordinates are supplied), and quantity.</p></article>
+      <article><div class="step-icon lilac">♡</div><span class="step-number">STEP 03</span><h3>Reserve and collect</h3><p>Reserve available portions and coordinate pickup directly with the provider.</p></article>
+    </div>
+  </section>
+  <section class="bottom-cta"><div><span class="eyebrow">EVERY CONTRIBUTION COUNTS</span><h2>Have extra food? Make it matter.</h2><p>List surplus food in a few simple steps.</p></div><button class="button white" onclick="openForm()">List surplus food <span>↗</span></button></section>
+</main>
+<footer><a class="brand" href="#"><span class="brand-icon">♧</span> FoodBridge</a><p>Save Food. Share Hope. · HackHorizon 2K26</p><small>Demo project. Providers must verify safe handling and pickup details before sharing food.</small></footer>
+
+<div id="listing-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <div class="modal-backdrop" onclick="closeForm()"></div>
+  <div class="modal-card">
+    <button class="modal-close" onclick="closeForm()" aria-label="Close">×</button>
+    <div class="eyebrow">HELP YOUR COMMUNITY</div><h2 id="modal-title">List surplus food</h2><p class="modal-intro">Share clear details so recipients can decide and collect in time.</p>
+    <form id="listing-form">
+      <div class="form-grid">
+        <label class="full">Food name *<input name="title" required placeholder="e.g. Fresh vegetable meals"></label>
+        <label>Category *<select name="category" required><option>Prepared meals</option><option>Produce</option><option>Bakery</option><option>Dairy</option><option>Packaged food</option></select></label>
+        <label>Quantity *<div class="inline-input"><input name="quantity" type="number" min="1" required placeholder="10"><select name="unit"><option>meals</option><option>packs</option><option>kg</option><option>boxes</option><option>items</option></select></div></label>
+        <label>Provider name *<input name="provider" required placeholder="Restaurant or person"></label>
+        <label>Pickup location *<input name="location" required placeholder="Area, city"></label>
+        <label>Offer type *<select name="mode" id="offer-mode"><option>Donation</option><option>Discounted</option></select></label>
+        <label>Price per unit (₹)<input name="price" type="number" min="0" step="0.5" value="0"></label>
+        <label class="full">Pickup deadline *<input name="pickup_by" type="datetime-local" required></label>
+        <label>Latitude (optional)<input name="lat" type="number" step="any" placeholder="22.804"></label>
+        <label>Longitude (optional)<input name="lon" type="number" step="any" placeholder="86.202"></label>
+        <label class="full">Storage and handling notes *<textarea name="storage_notes" required rows="2" placeholder="How was it stored? Packaging or allergen details..."></textarea></label>
+      </div>
+      <div class="safety-note">⚠️ Only list food you reasonably believe has been safely handled and stored. Include allergens where known. Never list food past its safe-consumption deadline.</div>
+      <p id="form-error" class="form-error hidden"></p><button class="button primary submit-button" type="submit">Publish listing ↗</button>
+    </form>
+  </div>
+</div>
+<div id="toast" class="toast"></div>
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
